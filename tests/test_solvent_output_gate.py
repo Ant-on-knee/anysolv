@@ -155,7 +155,7 @@ def test_water_spot_values():
         vec[i_n].item() - (water["n"] - 1.0) / _SOLVENT_STATS["n"]["scale"]
     ) < 1e-5
     assert abs(
-        vec[i_eps].item() - math.log(water["epsilon"]) / _SOLVENT_STATS["epsilon"]["scale"]
+        vec[i_eps].item() - (1.0 - 1.0 / water["epsilon"]) / _SOLVENT_STATS["epsilon"]["scale"]
     ) < 1e-5
     assert abs(
         vec[i_gamma].item() - water["gamma"] / _SOLVENT_STATS["gamma"]["scale"]

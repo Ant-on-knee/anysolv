@@ -41,7 +41,7 @@ _EPS_STATS = {
     "log": {"transform": "log", "scale": 0.960804},
     "born": {"transform": "born", "scale": 0.165059},
 }
-_EPS_TRANSFORM_ENV = os.environ.get("ANYSOLV_SOLVENT_EPS_TRANSFORM", "log")
+_EPS_TRANSFORM_ENV = os.environ.get("ANYSOLV_SOLVENT_EPS_TRANSFORM", "born")
 if _EPS_TRANSFORM_ENV not in _EPS_STATS:
     raise ValueError(f"ANYSOLV_SOLVENT_EPS_TRANSFORM must be one of "
                      f"{sorted(_EPS_STATS)}, got {_EPS_TRANSFORM_ENV!r}")
@@ -381,7 +381,7 @@ def get_solvent_vector(solvent_name, strict: bool = True,
 
     eps_transform: 'log' (r4 and earlier) / 'born' (r5+). Pass the CHECKPOINT'S
     value (convert_checkpoint.py bakes it; load_model exposes model.eps_transform);
-    None falls back to ANYSOLV_SOLVENT_EPS_TRANSFORM, default 'log'.
+    None falls back to ANYSOLV_SOLVENT_EPS_TRANSFORM, default 'born'.
     """
     vec = torch.zeros(1, SOLVENT_DIM, dtype=torch.float32)
     if solvent_name is None:
