@@ -1,13 +1,13 @@
 """Guards on the solvent-name alias layer (no checkpoint or GPU required).
 
-    python -m pytest anisolv/tests/test_solvent_aliases.py -q
+    python -m pytest anysolv/tests/test_solvent_aliases.py -q
 
 The alias table is hand-maintained; this unittest tries to mitigate typographical mistakes.
 """
 
 import torch
 
-from anisolv.solvent import (SOLVENT_DIM, _ALIASES, _load_raw, _norm, get_solvent_vector,
+from anysolv.solvent import (SOLVENT_DIM, _ALIASES, _load_raw, _norm, get_solvent_vector,
                              list_aliases, list_solvents, resolve_solvent_name)
 
 

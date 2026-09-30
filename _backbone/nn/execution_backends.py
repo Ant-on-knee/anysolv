@@ -12,10 +12,10 @@ from typing import TYPE_CHECKING
 
 import torch
 
-from anisolv._backbone.nn.unified_radial import UnifiedRadialMLP
+from anysolv._backbone.nn.unified_radial import UnifiedRadialMLP
 
 if TYPE_CHECKING:
-    from anisolv._backbone._compat.inference import (
+    from anysolv._backbone._compat.inference import (
         InferenceSettings,
     )
 
@@ -293,7 +293,7 @@ class UMASFastPytorchBackend(ExecutionBackend):
         Edgewise module. Then creates a UnifiedRadialMLP from all
         radial functions for efficient batched computation.
         """
-        from anisolv._backbone.nn.so2_layers import (
+        from anysolv._backbone.nn.so2_layers import (
             convert_so2_conv1,
             convert_so2_conv2,
         )
@@ -370,7 +370,7 @@ class UMASFastGPUBackend(UMASFastPytorchBackend):
         edge_index: torch.Tensor,
         wigner: torch.Tensor,
     ) -> torch.Tensor:
-        from anisolv._backbone.triton import (
+        from anysolv._backbone.triton import (
             UMASFastGPUNodeToEdgeWignerPermute,
         )
 
@@ -384,7 +384,7 @@ class UMASFastGPUBackend(UMASFastPytorchBackend):
         num_nodes: int,
         node_offset: int = 0,
     ) -> torch.Tensor:
-        from anisolv._backbone.triton import (
+        from anysolv._backbone.triton import (
             UMASFastGPUPermuteWignerInvEdgeToNode,
         )
 

@@ -15,43 +15,43 @@ from typing import TYPE_CHECKING, Literal
 import numpy as np
 import torch
 import torch.nn as nn
-try:  # omegaconf is not a anisolv dependency; configs are plain dict/list after conversion
+try:  # omegaconf is not a anysolv dependency; configs are plain dict/list after conversion
     from omegaconf import DictConfig, ListConfig
 except ModuleNotFoundError:  # torch-only environment
     DictConfig, ListConfig = dict, list
 from torch.distributed.nn.functional import all_reduce as all_reduce_with_grad
 from torch.profiler import record_function
 
-from anisolv._backbone._compat import gp_utils
-from anisolv._backbone._compat.registry import registry
-from anisolv._backbone._compat.utils import conditional_grad
-from anisolv._backbone._compat.graph_compute import generate_graph
-from anisolv._backbone._compat.base import HeadInterface
-from anisolv._backbone.common.rotation import (
+from anysolv._backbone._compat import gp_utils
+from anysolv._backbone._compat.registry import registry
+from anysolv._backbone._compat.utils import conditional_grad
+from anysolv._backbone._compat.graph_compute import generate_graph
+from anysolv._backbone._compat.base import HeadInterface
+from anysolv._backbone.common.rotation import (
     eulers_to_wigner,
     init_edge_rot_euler_angles,
 )
-from anisolv._backbone.common.so3 import CoefficientMapping, SO3_Grid
-from anisolv._backbone.nn.embedding import (
+from anysolv._backbone.common.so3 import CoefficientMapping, SO3_Grid
+from anysolv._backbone.nn.embedding import (
     ChgSpinEmbedding,
     DatasetEmbedding,
     EdgeDegreeEmbedding,
     SolventEmbedding,
 )
-from anisolv._backbone.nn.execution_backends import (
+from anysolv._backbone.nn.execution_backends import (
     get_execution_backend,
 )
-from anisolv._backbone.nn.layer_norm import (
+from anysolv._backbone.nn.layer_norm import (
     EquivariantLayerNormArray,
     EquivariantLayerNormArraySphericalHarmonics,
     EquivariantRMSNormArraySphericalHarmonics,
     EquivariantRMSNormArraySphericalHarmonicsV2,
     get_normalization_layer,
 )
-from anisolv._backbone.nn.mole_utils import MOLEInterface
-from anisolv._backbone.nn.radial import GaussianSmearing, PolynomialEnvelope
-from anisolv._backbone.nn.so3_layers import SO3_Linear
-from anisolv._backbone.outputs import (
+from anysolv._backbone.nn.mole_utils import MOLEInterface
+from anysolv._backbone.nn.radial import GaussianSmearing, PolynomialEnvelope
+from anysolv._backbone.nn.so3_layers import SO3_Linear
+from anysolv._backbone.outputs import (
     compute_energy,
     compute_forces,
     compute_forces_and_stress,
@@ -59,7 +59,7 @@ from anisolv._backbone.outputs import (
     get_l_component_range,
     reduce_node_to_system,
 )
-from anisolv._backbone._compat.inference import (
+from anysolv._backbone._compat.inference import (
     CHARGE_RANGE,
     DEFAULT_CHARGE,
     DEFAULT_SPIN,
@@ -74,7 +74,7 @@ if TYPE_CHECKING:
     from ase import Atoms
 
     from fairchem.core.datasets.atomic_data import AtomicData
-    from anisolv._backbone._compat.inference import InferenceSettings
+    from anysolv._backbone._compat.inference import InferenceSettings
 
 
 ESCNMD_DEFAULT_EDGE_ACTIVATION_CHECKPOINT_CHUNK_SIZE = 1024 * 128
@@ -389,10 +389,10 @@ class eSCNMDBackbone(nn.Module, MOLEInterface):
         for l in range(self.lmax + 1):
             self.register_buffer(f"Jd_{l}", Jd_list[l])
 
-        # The quaternion Wigner path is not in anisolv
+        # The quaternion Wigner path is not in anysolv
         if self.use_quaternion_wigner:
             raise RuntimeError(
-                "use_quaternion_wigner=True is unsupported in standalone anisolv; "
+                "use_quaternion_wigner=True is unsupported in standalone anysolv; "
                 "the Euler/Jd path (use_quaternion_wigner=False) is the included "
                 "verified-equivalent rotation path."
             )
@@ -442,7 +442,7 @@ class eSCNMDBackbone(nn.Module, MOLEInterface):
 
         # solvent embedding
         if self.use_solvent_embedding:
-            from anisolv.solvent import SOLVENT_DIM
+            from anysolv.solvent import SOLVENT_DIM
 
             self.solvent_embedding = SolventEmbedding(
                 solvent_input_dim=SOLVENT_DIM,

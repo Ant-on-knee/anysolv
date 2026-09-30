@@ -3,7 +3,7 @@ requires = ["setuptools>=64", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "anisolv"
+name = "anysolv"
 version = "0.1.0"
 description = "Standalone implicit solvation model for machine-learning interatomic potentials"
 readme = "README.md"
@@ -30,22 +30,22 @@ hub = ["huggingface_hub"]
 gpu = ["triton>=3.4"]
 
 [project.urls]
-Repository = "https://github.com/Ant-on-knee/anisolv"
-"Model weights" = "https://huggingface.co/antonknee/anisolv"
+Repository = "https://github.com/Ant-on-knee/anysolv"
+"Model weights" = "https://huggingface.co/antonknee/anysolv"
 
 [tool.setuptools]
-package-dir = { "anisolv" = "." }
+package-dir = { "anysolv" = "." }
 packages = [
-    "anisolv",
-    "anisolv._backbone",
-    "anisolv._backbone._compat",
-    "anisolv._backbone.common",
-    "anisolv._backbone.nn",
-    "anisolv._backbone.triton",
+    "anysolv",
+    "anysolv._backbone",
+    "anysolv._backbone._compat",
+    "anysolv._backbone.common",
+    "anysolv._backbone.nn",
+    "anysolv._backbone.triton",
 ]
 
 [tool.setuptools.package-data]
 # Include compact weights.
 # model_moe.pt is intentionally excluded — it is downloaded separately.
-"anisolv" = ["_const/*.json", "_const/*.pt", "models/model_compact.pt"]
-"anisolv._backbone" = ["*.pt"]
+"anysolv" = ["_const/*.json", "_const/*.pt", "models/model_compact.pt"]
+"anysolv._backbone" = ["*.pt"]

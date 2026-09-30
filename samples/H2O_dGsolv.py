@@ -3,18 +3,18 @@
 The sample performs the following:
 
     1. relax H2O in the gas phase with a base potential          -> E_gas, G_gas
-    2. relax H2O in water with (base + anisolv water delta)      -> E_solv, G_solv
+    2. relax H2O in water with (base + anysolv water delta)      -> E_solv, G_solv
     3. dG_solv = G_solv - G_gas                                  (reported in kcal/mol)
 
 ``predict_solvation_energy`` in ansiolv returns the single point energy correction dE = E_solv - E_gas
-This sample defaults to the UMA-S model whose underlying architecture anisolv was trained on,
+This sample defaults to the UMA-S model whose underlying architecture anysolv was trained on,
 but the solvation model is compatible with any gas phase potential (MLIP or DFT).
 
 Unlike H2O_single_point.py, this sample therefore needs ASE + a base potential (fairchem UMA
 by default)
 
-    python anisolv/samples/H2O_dGsolv.py                              # auto: model_moe > model_compact
-    python anisolv/samples/H2O_dGsolv.py --checkpoint model_compact  # or a name / path to a .pt
+    python anysolv/samples/H2O_dGsolv.py                              # auto: model_moe > model_compact
+    python anysolv/samples/H2O_dGsolv.py --checkpoint model_compact  # or a name / path to a .pt
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-# Make `anisolv` importable when run straight from a checkout (repo root = parents[2]).
+# Make `anysolv` importable when run straight from a checkout (repo root = parents[2]).
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import numpy as np 
@@ -35,11 +35,11 @@ from ase.optimize import BFGS
 from ase.thermochemistry import HarmonicThermo 
 from ase.vibrations import Vibrations 
 
-from anisolv import default_checkpoint_path, predict_solvation_energy
+from anysolv import default_checkpoint_path, predict_solvation_energy
 
 EV_TO_KCAL = 1.0 / (units.kcal / units.mol)  # ~23.0605
 _ZERO_MODE_eV = 1e-4  # modes below this |energy| are trans/rot remnants / numerical noise
-class AniSolvDeltaCalculator(Calculator):
+class AnySolvDeltaCalculator(Calculator):
     """``predict_solvation_energy`` as an ASE calculator (the additive solvation correction).
 
     Energy/forces are the dE/dF the model predicts; reads ``charge``/``spin``/``solvent`` from
@@ -82,7 +82,7 @@ class AniSolvDeltaCalculator(Calculator):
 
 
 def make_uma_base(device="cpu"):
-    """Default base gas-phase potential: UMA-small (omol) via fairchem - what anisolv corrects."""
+    """Default base gas-phase potential: UMA-small (omol) via fairchem - what anysolv corrects."""
     try:
         from fairchem.core import FAIRChemCalculator, pretrained_mlip
     except ImportError as exc:  
@@ -158,11 +158,11 @@ def water() -> Atoms:
 
 
 def main(base=None, device="cpu", temperature=298.15, checkpoint=None) -> int:
-    """``checkpoint``: anisolv checkpoint name or path (None -> auto: model_moe > model_compact)."""
+    """``checkpoint``: anysolv checkpoint name or path (None -> auto: model_moe > model_compact)."""
     base = base if base is not None else make_uma_base(device=device)
-    delta = AniSolvDeltaCalculator(checkpoint=checkpoint, device=device)
+    delta = AnySolvDeltaCalculator(checkpoint=checkpoint, device=device)
     ckpt_label = checkpoint or f"{default_checkpoint_path().stem} (auto-selected)"
-    solv_calc = SumCalculator([base, delta])  # E_solv = E_gas + dE_anisolv
+    solv_calc = SumCalculator([base, delta])  # E_solv = E_gas + dE_anysolv
 
     # gas phase 
     gas = water()
@@ -181,7 +181,7 @@ def main(base=None, device="cpu", temperature=298.15, checkpoint=None) -> int:
 
     print(f"\nH2O solvation in water  (T = {temperature:.2f} K)")
     print(f"  base potential        : {type(base).__name__}")
-    print(f"  anisolv checkpoint    : {ckpt_label}")
+    print(f"  anysolv checkpoint    : {ckpt_label}")
     print(f"  gas   : E = {e_gas:12.6f} eV   ZPE = {zpe_gas:.4f} eV   "
           f"G = {g_gas:12.6f} eV   ({'min' if not n_imag_gas else f'{n_imag_gas} imag'}, "
           f"{'conv' if conv_gas else 'UNCONVERGED'})")
@@ -198,7 +198,7 @@ def main(base=None, device="cpu", temperature=298.15, checkpoint=None) -> int:
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="harmonic thermodynamic-cycle dG_solv of H2O in water")
     ap.add_argument("--checkpoint", default=None,
-                    help="anisolv checkpoint name or path to a .pt (default: auto, model_moe > model_compact)")
+                    help="anysolv checkpoint name or path to a .pt (default: auto, model_moe > model_compact)")
     ap.add_argument("--device", default="cpu", help="torch device for both potentials (default: cpu)")
     ap.add_argument("--temperature", type=float, default=298.15, help="temperature in K (default: 298.15)")
     a = ap.parse_args()

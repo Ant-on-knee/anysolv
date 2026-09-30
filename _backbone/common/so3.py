@@ -200,7 +200,7 @@ class SO3_Grid(torch.nn.Module):
         self.mapping = CoefficientMapping(self.lmax, self.lmax)
         self.rescale = rescale
 
-        # Standalone anisolv: load the baked grid matrices instead of constructing them
+        # Standalone anysolv: load the baked grid matrices instead of constructing them
         # with e3nn's ToS2Grid/FromS2Grid. They are persistent=False buffers (never in
         # the checkpoint) and a fixed function of (lmax, mmax, normalization, resolution).
         # Only lmax==mmax==2 is used by this model (the rescale branch above was a no-op

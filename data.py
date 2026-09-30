@@ -127,7 +127,7 @@ def build_atomic_data(
 ) -> AtomicData:
     """Assemble the backbone input for a single molecule.
 
-    `solvent` is an optional pre-normalized (1, 8) tensor (see anisolv.solvent); pass None
+    `solvent` is an optional pre-normalized (1, 8) tensor (see anysolv.solvent); pass None
     for the plain (gas/no-solvent) checkpoints.
     """
     numbers, positions = _as_arrays(atoms_or_arrays)

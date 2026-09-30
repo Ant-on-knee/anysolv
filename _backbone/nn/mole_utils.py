@@ -13,13 +13,13 @@ from contextlib import suppress
 import torch
 import torch.nn as nn
 
-from anisolv._backbone.nn.mole import (
+from anysolv._backbone.nn.mole import (
     MOLE,
     MOLEDGL,
     MOLEGlobals,
     norm_str_to_fn,
 )
-from anisolv._backbone.nn.so2_layers import SO2_Convolution
+from anysolv._backbone.nn.so2_layers import SO2_Convolution
 
 fairchem_cpp_found = False
 with suppress(ModuleNotFoundError):

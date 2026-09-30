@@ -1,14 +1,14 @@
-"""Sample: single-point hydration free energies (dE_solv in water) via the anisolv.
+"""Sample: single-point hydration free energies (dE_solv in water) via the anysolv.
 
 takes a handful of small solutes, obtains the water solvation correction, and reports it against
 experimental hydration free energies.
 
-    python anisolv/samples/H2O_single_point.py                              # auto: model_moe > model_compact
-    python anisolv/samples/H2O_single_point.py --checkpoint model_compact  # or a name / path to a .pt
+    python anysolv/samples/H2O_single_point.py                              # auto: model_moe > model_compact
+    python anysolv/samples/H2O_single_point.py --checkpoint model_compact  # or a name / path to a .pt
 
 To use ASE's geometries instead of the included fallback, install the optional extra:
 
-    pip install "anisolv[ase]"
+    pip install "anysolv[ase]"
 
 For the full thermodynamic cycle (geometry relaxation + harmonic vibrational dG) on a single
 H2O, see the companion H2O_dGsolv.py.
@@ -21,7 +21,7 @@ import math
 import sys
 from pathlib import Path
 
-# Make `anisolv` importable when run straight from a checkout (repo root = parents[2]).
+# Make `anysolv` importable when run straight from a checkout (repo root = parents[2]).
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 try:
@@ -32,7 +32,7 @@ except ImportError:  # ASE is optional -- fall back to the included geometries i
     molecule = None
     HAVE_ASE = False
 
-from anisolv import default_checkpoint_path, predict_solvation_energy  # noqa: E402
+from anysolv import default_checkpoint_path, predict_solvation_energy  # noqa: E402
 
 EV_TO_KCAL = 23.060548  # 1 eV in kcal/mol
 
@@ -107,7 +107,7 @@ def _resolve(name: str):
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="single-point hydration dG of small solutes via anisolv")
+    ap = argparse.ArgumentParser(description="single-point hydration dG of small solutes via anysolv")
     ap.add_argument("--checkpoint", default=None,
                     help="checkpoint name or path to a .pt (default: auto, model_moe > model_compact)")
     ap.add_argument("--device", default="cpu", help="torch device: cpu (default), cuda, or mps")

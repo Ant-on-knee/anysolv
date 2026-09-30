@@ -15,15 +15,15 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from anisolv._backbone._compat.registry import registry
-from anisolv._backbone._compat.utils import conditional_grad
-from anisolv._backbone._compat.base import HeadInterface
-from anisolv._backbone.escn_md import eSCNMDBackbone, resolve_dataset_mapping
-from anisolv._backbone.nn.mole import (
+from anysolv._backbone._compat.registry import registry
+from anysolv._backbone._compat.utils import conditional_grad
+from anysolv._backbone._compat.base import HeadInterface
+from anysolv._backbone.escn_md import eSCNMDBackbone, resolve_dataset_mapping
+from anysolv._backbone.nn.mole import (
     MOLE,
     MOLEGlobals,
 )
-from anisolv._backbone.nn.mole_utils import (
+from anysolv._backbone.nn.mole_utils import (
     MOLEInterface,
     convert_model_to_MOLE_model,
     model_search_and_replace,

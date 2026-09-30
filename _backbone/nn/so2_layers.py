@@ -18,7 +18,7 @@ from torch.nn import Linear
 from .radial import RadialMLP
 
 if TYPE_CHECKING:
-    from anisolv._backbone.common.so3 import CoefficientMapping
+    from anysolv._backbone.common.so3 import CoefficientMapping
 
 
 class SO2_m_Conv(torch.nn.Module):

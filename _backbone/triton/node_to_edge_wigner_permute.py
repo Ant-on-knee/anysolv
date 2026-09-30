@@ -82,7 +82,7 @@ class NodeToEdgeWignerPermuteFunction(torch.autograd.Function):
         x = x.contiguous()
 
         # ONLY kernel launch is opaque (via custom_op with mutates_args)
-        torch.ops.anisolv._kernel_node_to_edge_wigner_permute(
+        torch.ops.anysolv._kernel_node_to_edge_wigner_permute(
             x, edge_index, wigner, out, x_edge
         )
 
@@ -120,7 +120,7 @@ class NodeToEdgeWignerPermuteFunction(torch.autograd.Function):
         )
 
         # ONLY kernel launch is opaque
-        torch.ops.anisolv._kernel_node_to_edge_wigner_permute_bwd_dx(
+        torch.ops.anysolv._kernel_node_to_edge_wigner_permute_bwd_dx(
             grad_out, wigner, grad_edge
         )
 

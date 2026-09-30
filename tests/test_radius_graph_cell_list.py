@@ -8,7 +8,7 @@ The reference is called with an effectively infinite max_neighbors so its degene
 fires - the cell list has no cap, so this is the apples-to-apples comparison (the cap is a
 no-op at molecular densities anyway; see radius_graph).
 
-    python anisolv/tests/test_radius_graph_cell_list.py
+    python anysolv/tests/test_radius_graph_cell_list.py
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import torch  # noqa: E402
 
-from anisolv.data import radius_graph, radius_graph_cell_list  # noqa: E402
+from anysolv.data import radius_graph, radius_graph_cell_list  # noqa: E402
 
 NO_CAP = 10**9  # disable radius_graph's max-neighbor cap for the comparison
 
