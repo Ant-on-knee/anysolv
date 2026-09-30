@@ -7,9 +7,6 @@ LICENSE file in the root directory of this source tree.
 
 from __future__ import annotations
 
-# Register triton_op kernels with torch.ops.anisolv.* on package import
-# This must happen before NodeToEdgeWignerPermuteFunction/PermuteWignerInvEdgeToNodeFunction
-# are used, as they call torch.ops.anisolv._kernel_* in forward/backward
 from . import custom_ops  # noqa: F401
 
 from .node_to_edge_wigner_permute import (

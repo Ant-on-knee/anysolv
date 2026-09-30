@@ -76,7 +76,7 @@ _DEFAULT_BACKBONE = "eSCNMDMoeBackbone"
 
 # Inference overrides applied on top of the checkpoint's backbone_config. 
 _INFERENCE_OVERRIDES = dict(
-    otf_graph=False,            # edges precomputed by anisolv.data
+    otf_graph=False,            # edges precomputed by anysolv.data
     use_pbc=False,
     use_pbc_single=False,
     always_use_pbc=False,
@@ -89,7 +89,7 @@ _INFERENCE_OVERRIDES = dict(
 )
 
 
-class AniSolvModel(nn.Module):
+class AnySolvModel(nn.Module):
     """backbone + EFS head; forward(data) -> head output dict (raw, un-normalized).
     """
 
@@ -146,12 +146,12 @@ def _resolve(checkpoint: str | Path) -> Path:
 
 def load_model(checkpoint: str | Path | None = None, device: str = "cpu",
                dtype: torch.dtype = torch.float32,
-               inference_settings: str | InferenceSettings = "default") -> AniSolvModel:
+               inference_settings: str | InferenceSettings = "default") -> AnySolvModel:
     """Build and load the standalone delta model from a converted checkpoint.
 
-    `checkpoint` is None (auto: 'model_moe' if its weights are present in anisolv/models, else
+    `checkpoint` is None (auto: 'model_moe' if its weights are present in anysolv/models, else
     the included 'model_compact'), a checkpoint name, or a path to a converted .pt. Returns an
-    AniSolvModel in eval mode on `device` with params cast to `dtype` (use torch.float64 for
+    AnySolvModel in eval mode on `device` with params cast to `dtype` (use torch.float64 for
     high-accuracy checks).
 
     `inference_settings` selects the inference path: a preset name -- 
@@ -175,6 +175,7 @@ def load_model(checkpoint: str | Path | None = None, device: str = "cpu",
 
     path = _resolve(checkpoint)
     ckpt = torch.load(str(path), map_location="cpu", weights_only=True)
+    # Tag predates the AniSolv -> AnySolv rename; released checkpoints carry it.
     if ckpt.get("format") != "anisolv-ckpt-v1":
         raise ValueError(f"{path} is not an anisolv-ckpt-v1 checkpoint")
 
@@ -226,10 +227,10 @@ def load_model(checkpoint: str | Path | None = None, device: str = "cpu",
 
     backbone = backbone_cls(**cfg)
     head = MLP_EFS_Head(backbone)  # nulls backbone.energy_block/force_block internally
-    model = AniSolvModel(backbone, head, ckpt["norm"], settings=settings)
+    model = AnySolvModel(backbone, head, ckpt["norm"], settings=settings)
     model.eps_transform = ckpt.get("eps_transform")
     if model.eps_transform is None:
-        env = os.environ.get("ANISOLV_SOLVENT_EPS_TRANSFORM")
+        env = os.environ.get("ANYSOLV_SOLVENT_EPS_TRANSFORM")
         if env:
             import logging
             logging.warning("checkpoint %s lacks eps_transform; using env override %r",
@@ -240,7 +241,7 @@ def load_model(checkpoint: str | Path | None = None, device: str = "cpu",
                 f"checkpoint {path} carries no eps_transform tag. Re-tag it "
                 f"(lr_augment/scripts/12_backfill_eps_tag.py for log-era files, or "
                 f"reconvert via convert_checkpoint.py <in> <name> <log|born>), or set "
-                f"ANISOLV_SOLVENT_EPS_TRANSFORM explicitly.")
+                f"ANYSOLV_SOLVENT_EPS_TRANSFORM explicitly.")
     if model.eps_transform not in ("log", "born"):
         raise ValueError(f"bad eps_transform {model.eps_transform!r} in {path}")
 

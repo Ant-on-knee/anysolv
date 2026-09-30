@@ -46,7 +46,7 @@ from .kernels import (
 
 
 @triton_op(
-    "anisolv::_kernel_node_to_edge_wigner_permute",
+    "anysolv::_kernel_node_to_edge_wigner_permute",
     mutates_args=("out", "x_edge"),
 )
 def _kernel_node_to_edge_wigner_permute(
@@ -101,7 +101,7 @@ def _kernel_node_to_edge_wigner_permute(
 
 
 @triton_op(
-    "anisolv::_kernel_permute_wigner_inv_edge_to_node",
+    "anysolv::_kernel_permute_wigner_inv_edge_to_node",
     mutates_args=("out", "x_l"),
 )
 def _kernel_permute_wigner_inv_edge_to_node(
@@ -137,7 +137,7 @@ def _kernel_permute_wigner_inv_edge_to_node(
 
 
 @triton_op(
-    "anisolv::_kernel_node_to_edge_wigner_permute_bwd_dx",
+    "anysolv::_kernel_node_to_edge_wigner_permute_bwd_dx",
     mutates_args=("grad_edge",),
 )
 def _kernel_node_to_edge_wigner_permute_bwd_dx(
@@ -185,7 +185,7 @@ def _kernel_node_to_edge_wigner_permute_bwd_dx(
 
 
 @triton_op(
-    "anisolv::_kernel_permute_wigner_inv_edge_to_node_bwd_dx",
+    "anysolv::_kernel_permute_wigner_inv_edge_to_node_bwd_dx",
     mutates_args=("grad_x",),
 )
 def _kernel_permute_wigner_inv_edge_to_node_bwd_dx(
@@ -216,7 +216,7 @@ def _kernel_permute_wigner_inv_edge_to_node_bwd_dx(
 
 
 @triton_op(
-    "anisolv::_kernel_permute_wigner_inv_edge_to_node_bwd_dw",
+    "anysolv::_kernel_permute_wigner_inv_edge_to_node_bwd_dw",
     mutates_args=("grad_wigner_flat",),
 )
 def _kernel_permute_wigner_inv_edge_to_node_bwd_dw(

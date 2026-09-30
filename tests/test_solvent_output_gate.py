@@ -2,7 +2,7 @@
 
 Run from the repo root:
 
-    python -m pytest anisolv/tests/test_solvent_output_gate.py -q
+    python -m pytest anysolv/tests/test_solvent_output_gate.py -q
 """
 
 from __future__ import annotations
@@ -12,9 +12,9 @@ from pathlib import Path
 
 import torch
 
-from anisolv._backbone.escn_md import MLP_EFS_Head, eSCNMDBackbone
-from anisolv.data import build_atomic_data
-from anisolv.solvent import _SOLVENT_STATS, SOLVENT_DESCRIPTOR_ORDER, get_solvent_vector
+from anysolv._backbone.escn_md import MLP_EFS_Head, eSCNMDBackbone
+from anysolv.data import build_atomic_data
+from anysolv.solvent import _SOLVENT_STATS, SOLVENT_DESCRIPTOR_ORDER, get_solvent_vector
 
 _DTYPE = torch.float64
 # H2O-ish geometry; exact coordinates are irrelevant to the gate guarantee.
@@ -79,7 +79,7 @@ def test_gate_off_is_nonzero_in_vacuum():
 def test_umas_fast_pytorch_matches_general():
     """The block-GEMM (umas_fast_pytorch) backend is an exact reorder of the general backend's
     weights, so on a non-MoE backbone it must reproduce energy/forces to float64 precision."""
-    from anisolv._backbone._compat.inference import InferenceSettings
+    from anysolv._backbone._compat.inference import InferenceSettings
 
     def _build(execution_mode):
         # Same seed + construction order -> identical weights across the two backends.
@@ -133,7 +133,7 @@ def test_umas_fast_pytorch_matches_general():
 
 def test_encoding_is_vacuum_anchored():
     """Physical gas phase (n=1, eps=1, rest 0) normalizes to all zeros."""
-    from anisolv.solvent import normalize
+    from anysolv.solvent import normalize
 
     vacuum_raw = [
         1.0 if name in ("n", "epsilon") else 0.0 for name in SOLVENT_DESCRIPTOR_ORDER

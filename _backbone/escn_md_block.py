@@ -15,21 +15,21 @@ import torch.nn as nn
 from torch.profiler import record_function
 from typing_extensions import Literal
 
-from anisolv._backbone._compat import gp_utils
-from anisolv._backbone.nn.activation import (
+from anysolv._backbone._compat import gp_utils
+from anysolv._backbone.nn.activation import (
     GateActivation,
     SeparableS2Activation_M,
 )
-from anisolv._backbone.nn.layer_norm import (
+from anysolv._backbone.nn.layer_norm import (
     get_normalization_layer,
 )
-from anisolv._backbone.nn.mole import MOLE
-from anisolv._backbone.nn.so2_layers import SO2_Convolution
-from anisolv._backbone.nn.so3_layers import SO3_Linear
+from anysolv._backbone.nn.mole import MOLE
+from anysolv._backbone.nn.so2_layers import SO2_Convolution
+from anysolv._backbone.nn.so3_layers import SO3_Linear
 
 if TYPE_CHECKING:
-    from anisolv._backbone.common.so3 import CoefficientMapping, SO3_Grid
-    from anisolv._backbone.nn.execution_backends import ExecutionBackend
+    from anysolv._backbone.common.so3 import CoefficientMapping, SO3_Grid
+    from anysolv._backbone.nn.execution_backends import ExecutionBackend
 
 
 def set_mole_ac_start_index(module: nn.Module, index: int) -> None:

@@ -7,18 +7,18 @@ Checks the following:
   * merge_MOLE_model must pass `solvent` to csd_embedding (solvent-conditioned model),
   * the merged backbone must be moved to the source device/dtype.
 
-Run from the repo root:  python -m pytest anisolv/tests/test_moe_merge.py -q
+Run from the repo root:  python -m pytest anysolv/tests/test_moe_merge.py -q
 """
 
 from __future__ import annotations
 
 import torch
 
-from anisolv._backbone._compat.inference import InferenceSettings
-from anisolv._backbone.escn_md import MLP_EFS_Head, eSCNMDBackbone
-from anisolv._backbone.escn_moe import eSCNMDMoeBackbone
-from anisolv.data import build_atomic_data
-from anisolv.solvent import get_solvent_vector
+from anysolv._backbone._compat.inference import InferenceSettings
+from anysolv._backbone.escn_md import MLP_EFS_Head, eSCNMDBackbone
+from anysolv._backbone.escn_moe import eSCNMDMoeBackbone
+from anysolv.data import build_atomic_data
+from anysolv.solvent import get_solvent_vector
 
 _DTYPE = torch.float64
 _NUMBERS = [8, 1, 1]

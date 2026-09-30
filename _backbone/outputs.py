@@ -11,7 +11,7 @@ from typing import Literal
 
 import torch
 
-from anisolv._backbone._compat import gp_utils
+from anysolv._backbone._compat import gp_utils
 
 
 def get_l_component_range(x: torch.Tensor, l_min: int, l_max: int) -> torch.Tensor:

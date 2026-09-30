@@ -1,4 +1,4 @@
-# Citation metadata for the AniSolv code.
+# Citation metadata for the AnySolv code.
 #
 # NOTE: the trained model weights (model_moe.pt) are NOT in this repository.
 # They are released separately on Hugging Face under the FAIR Chemistry License — a
@@ -7,14 +7,14 @@
 #
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below, and please also cite the UMA model it derives from (see references)."
-title: "AniSolv: MLIP Implicit Solvation with DFT Accuracy"
+title: "AnySolv: Fast and Transferable MLIP Implicit Solvation"
 type: software
 version: "0.1.0"
 authors:
   - family-names: Ni
     given-names: "Anton Z."
-repository-code: "https://github.com/Ant-on-knee/anisolv"
-url: "https://github.com/Ant-on-knee/anisolv"
+repository-code: "https://github.com/Ant-on-knee/anysolv"
+url: "https://github.com/Ant-on-knee/anysolv"
 license: MIT
 date-released: 2026-08-27
 references:

@@ -1,12 +1,14 @@
-<h1 align="center">AniSolv</h1>
-<p align="center"><em>MLIP Implicit Solvation with DFT Accuracy</em></p>
+<h1 align="center">AnySolv</h1>
+<p align="center"><em>Fast and Transferable MLIP Implicit Solvation</em></p>
 
-AniSolv predicts the single-point solvation energy: it produces a solvation energy $\Delta E$ and the associated force correction $\Delta F$, which can be added to any gas-phase potential (MLIP or DFT) to obtain solvated energies and forces. AniSolv is trained on molecular systems.
+> **Note:** AnySolv was formerly called **AniSolv** (package `anisolv`).
+
+AnySolv predicts the single-point solvation energy: it produces a solvation energy $\Delta E$ and the associated force correction $\Delta F$, which can be added to any gas-phase potential (MLIP or DFT) to obtain solvated energies and forces. AnySolv is trained on molecular systems.
 
 $$
 \begin{aligned}
-E_{\text{solvated}} &= E_{\text{gas}} + \Delta E_{\text{anisolv}} \\
-F_{\text{solvated}} &= F_{\text{gas}} + \Delta F_{\text{anisolv}}
+E_{\text{solvated}} &= E_{\text{gas}} + \Delta E_{\text{anysolv}} \\
+F_{\text{solvated}} &= F_{\text{gas}} + \Delta F_{\text{anysolv}}
 \end{aligned}
 $$
 
@@ -31,15 +33,15 @@ Leaving `checkpoint` unset (`None`) auto-selects `model_moe` when its weights ar
 ## Installation
 
 ```bash
-git clone git@github.com:Ant-on-knee/anisolv.git
-cd anisolv
+git clone git@github.com:Ant-on-knee/anysolv.git
+cd anysolv
 pip install -e .              # editable install; or `pip install .`
 ```
 
 You can also install straight from GitHub without cloning:
 
 ```bash
-pip install "git+ssh://git@github.com/Ant-on-knee/anisolv.git"
+pip install "git+ssh://git@github.com/Ant-on-knee/anysolv.git"
 ```
 
 Optional extras:
@@ -50,15 +52,15 @@ pip install -e ".[hub]"       # huggingface_hub - needed to download the weights
 ```
 
 The single_point sample runs without ASE; install the extra only if you want ASE's structures or `ase.Atoms` I/O. 
-For a non-editable (PyPI) install, use `pip install "anisolv[ase]"`.
+For a non-editable (PyPI) install, use `pip install "anysolv[ase]"`.
 
-> **PyTorch note:** `pip` will pull a default `torch` build. For a specific CUDA/CPU build, install torch from [pytorch.org](https://pytorch.org/get-started/locally/) first, then install AniSolv.
+> **PyTorch note:** `pip` will pull a default `torch` build. For a specific CUDA/CPU build, install torch from [pytorch.org](https://pytorch.org/get-started/locally/) first, then install AnySolv.
 
 ## Download the model weights
 
 The trained checkpoint **`model_moe.pt` (~1.1 GB) is not in this repository** - it is git-ignored and distributed separately on Hugging Face.
 
-**1. Request access.** Go to **https://huggingface.co/antonknee/anisolv** and accept the FAIR Chemistry License. You must provide your full legal name, date of birth, and organization.
+**1. Request access.** Go to **https://huggingface.co/antonknee/anysolv** and accept the FAIR Chemistry License. You must provide your full legal name, date of birth, and organization.
 
 **2. Authenticate.**
 
@@ -72,18 +74,18 @@ hf auth login                  # paste a token from https://huggingface.co/setti
 - **If you cloned the repo and installed with `pip install -e .`**, drop it into the `models` directory:
 
   ```bash
-  hf download antonknee/anisolv model_moe.pt --local-dir models
+  hf download antonknee/anysolv model_moe.pt --local-dir models
   ```
 
 - **If you installed with a plain `pip install`** (from PyPI or `pip install git+…`), download it to any directory you control and pass its **absolute path** at call time. Until you do, the already included `model_compact` remains the default:
 
   ```bash
-  hf download antonknee/anisolv model_moe.pt --local-dir /path/to/anisolv-weights
+  hf download antonknee/anysolv model_moe.pt --local-dir /path/to/anysolv-weights
   ```
 
   ```python
-  from anisolv import predict_solvation_energy
-  predict_solvation_energy(..., checkpoint="/path/to/anisolv-weights/model_moe.pt")  # absolute path
+  from anysolv import predict_solvation_energy
+  predict_solvation_energy(..., checkpoint="/path/to/anysolv-weights/model_moe.pt")  # absolute path
   ```
 
 > **License note:** these weights are a derivative of Meta's UMA (`uma-s-1p2`) and are governed by the **FAIR Chemistry License - not MIT**. The MIT license in this repo covers the *inference code only* and does not extend to the weights.
@@ -91,7 +93,7 @@ hf auth login                  # paste a token from https://huggingface.co/setti
 ## Quickstart
 
 ```python
-from anisolv import predict_solvation_energy
+from anysolv import predict_solvation_energy
 
 # Water geometry: atomic numbers Z and positions R (angstrom)
 Z = [8, 1, 1]
@@ -148,7 +150,7 @@ For full control, pass an `InferenceSettings` instead of a preset name (e.g. mer
 without Triton):
 
 ```python
-from anisolv import InferenceSettings, predict_solvation_energy
+from anysolv import InferenceSettings, predict_solvation_energy
 settings = InferenceSettings(execution_mode="umas_fast_pytorch", tf32=True, compile=True,
                              merge_mole=True)  # MoE: merge -> block-GEMM + compile, single-composition
 dE, dF = predict_solvation_energy((Z, R), checkpoint="model_moe", device="cuda",
@@ -162,16 +164,16 @@ dE, dF = predict_solvation_energy((Z, R), checkpoint="model_moe", device="cuda",
 The sample scripts live in this repository (clone it to run them). From the repo root:
 
 ```bash
-python anisolv/samples/H2O_single_point.py   # hydration dG for small molecules vs. experiment (ASE optional)
-python anisolv/samples/H2O_dGsolv.py         # full thermodynamic cycle: geometry relax + vibrational dG (needs ASE + a loaded gas-phase MLIP)
+python anysolv/samples/H2O_single_point.py   # hydration dG for small molecules vs. experiment (ASE optional)
+python anysolv/samples/H2O_dGsolv.py         # full thermodynamic cycle: geometry relax + vibrational dG (needs ASE + a loaded gas-phase MLIP)
 ```
 
 Both auto-select the checkpoint (`model_moe` > `model_compact`); pass `--checkpoint` to pick one
 explicitly (a name, or a path to a `.pt`) and `--device cpu|cuda|mps`:
 
 ```bash
-python anisolv/samples/H2O_single_point.py --checkpoint model_compact
-python anisolv/samples/H2O_dGsolv.py --checkpoint model_moe --device cuda
+python anysolv/samples/H2O_single_point.py --checkpoint model_compact
+python anysolv/samples/H2O_dGsolv.py --checkpoint model_moe --device cuda
 ```
 
 ## Supported solvents
@@ -190,7 +192,7 @@ The model has been shown to extrapolate very well to untrained solvents, and all
 
 ## Citation
 
-If you use AniSolv, please cite both the UMA work it derives from and this repository (see also
+If you use AnySolv, please cite both the UMA work it derives from and this repository (see also
 [`CITATION.cff`](CITATION.cff)):
 
 ```bibtex
@@ -203,12 +205,12 @@ If you use AniSolv, please cite both the UMA work it derives from and this repos
   url     = {https://arxiv.org/abs/2506.23971}
 }
 
-@misc{anisolv2026,
+@misc{anysolv2026,
   author       = {Ni, Anton Z.},
-  title        = {{AniSolv: MLIP Implicit Solvation with DFT Accuracy}},
+  title        = {{AnySolv: Fast and Transferable MLIP Implicit Solvation}},
   year         = {2026},
   publisher    = {GitHub},
-  howpublished = {\url{https://github.com/Ant-on-knee/anisolv}},
+  howpublished = {\url{https://github.com/Ant-on-knee/anysolv}},
   note         = {GitHub repository}
 }
 ```
