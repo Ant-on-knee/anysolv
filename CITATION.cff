@@ -16,7 +16,7 @@ authors:
 repository-code: "https://github.com/Ant-on-knee/anysolv"
 url: "https://github.com/Ant-on-knee/anysolv"
 license: MIT
-date-released: 2026-10-13
+date-released: 2026-10-14
 preferred-citation:
   type: generic
   title: "Solvating machine-learning interatomic potentials for solution-phase chemistry"
