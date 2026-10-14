@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,7 +8,8 @@ version = "0.1.0"
 description = "Standalone implicit solvation model for machine-learning interatomic potentials"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "Anton Z. Ni" }]
 keywords = [
     "chemistry",
@@ -31,12 +32,15 @@ gpu = ["triton>=3.4"]
 
 [project.urls]
 Repository = "https://github.com/Ant-on-knee/anysolv"
+Paper = "https://arxiv.org/abs/2610.17226"
 "Model weights" = "https://huggingface.co/antonknee/anysolv"
 
 [tool.setuptools]
 package-dir = { "anysolv" = "." }
 packages = [
     "anysolv",
+    "anysolv._const",
+    "anysolv.models",
     "anysolv._backbone",
     "anysolv._backbone._compat",
     "anysolv._backbone.common",
@@ -47,5 +51,6 @@ packages = [
 [tool.setuptools.package-data]
 # Include compact weights.
 # model_moe.pt is intentionally excluded — it is downloaded separately.
-"anysolv" = ["_const/*.json", "_const/*.pt", "models/model_compact.pt"]
+"anysolv._const" = ["*.json", "*.pt"]
+"anysolv.models" = ["model_compact.pt"]
 "anysolv._backbone" = ["*.pt"]

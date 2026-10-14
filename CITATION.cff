@@ -2,11 +2,11 @@
 #
 # NOTE: the trained model weights (model_moe.pt) are NOT in this repository.
 # They are released separately on Hugging Face under the FAIR Chemistry License — a
-# derivative of Meta's UMA (uma-s-1p2), not MIT. This file cites the *software*; please also cite
-# the UMA model (listed under `references`) that the weights derive from.
+# derivative of Meta's UMA (uma-s-1p2), not MIT. Please cite the AnySolv paper
+# (`preferred-citation`) and the UMA model (listed under `references`) that the weights derive from.
 #
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below, and please also cite the UMA model it derives from (see references)."
+message: "If you use this software, please cite the AnySolv paper (preferred-citation), and please also cite the UMA model it derives from (see references)."
 title: "AnySolv: Fast and Transferable MLIP Implicit Solvation"
 type: software
 version: "0.1.0"
@@ -16,11 +16,26 @@ authors:
 repository-code: "https://github.com/Ant-on-knee/anysolv"
 url: "https://github.com/Ant-on-knee/anysolv"
 license: MIT
-date-released: 2026-08-27
+date-released: 2026-10-13
+preferred-citation:
+  type: generic
+  title: "Solvating machine-learning interatomic potentials for solution-phase chemistry"
+  authors:
+    - family-names: Ni
+      given-names: "Anton Z."
+    - family-names: Lee
+      given-names: Joonho
+  year: 2026
+  month: 10
+  url: "https://arxiv.org/abs/2610.17226"
+  identifiers:
+    - type: other
+      value: "arXiv:2610.17226"
+      description: "arXiv eprint (physics.chem-ph)"
 references:
   - type: article
     title: "UMA: A Family of Universal Models for Atoms"
-    year: 2025
+    year: 2026
     doi: 10.48550/arXiv.2506.23971
     url: "https://arxiv.org/abs/2506.23971"
     authors:

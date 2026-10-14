@@ -33,6 +33,12 @@ Leaving `checkpoint` unset (`None`) auto-selects `model_moe` when its weights ar
 ## Installation
 
 ```bash
+pip install "anysolv[ase]"    # from PyPI; drop [ase] if you don't need ASE I/O
+```
+
+To run the sample scripts or develop, clone the repository instead:
+
+```bash
 git clone git@github.com:Ant-on-knee/anysolv.git
 cd anysolv
 pip install -e .              # editable install; or `pip install .`
@@ -52,7 +58,6 @@ pip install -e ".[hub]"       # huggingface_hub - needed to download the weights
 ```
 
 The single_point sample runs without ASE; install the extra only if you want ASE's structures or `ase.Atoms` I/O. 
-For a non-editable (PyPI) install, use `pip install "anysolv[ase]"`.
 
 > **PyTorch note:** `pip` will pull a default `torch` build. For a specific CUDA/CPU build, install torch from [pytorch.org](https://pytorch.org/get-started/locally/) first, then install AnySolv.
 
@@ -186,32 +191,33 @@ The model has been shown to extrapolate very well to untrained solvents, and all
 
 ## License
 
-- **Inference code (this repository): MIT** - see [`LICENSE`](LICENSE). The included
+- **Inference code (this repository): MIT** - see [`LICENSE`](https://github.com/Ant-on-knee/anysolv/blob/main/LICENSE). The included
   **`model_compact.pt`** weights are trained from scratch.
 - **Full-accuracy weights (`model_moe.pt`, on Hugging Face): FAIR Chemistry License v1.** A derivative of Meta's UMA (`uma-s-1p2`); redistribution is permitted only under the same license. Use is subject to the FAIR Chemistry Acceptable Use Policy and applicable Trade Control Laws.
 
 ## Citation
 
-If you use AnySolv, please cite both the UMA work it derives from and this repository (see also
-[`CITATION.cff`](CITATION.cff)):
+If you use AnySolv, please cite the AnySolv paper and the UMA work it builds on (see also [`CITATION.cff`](https://github.com/Ant-on-knee/anysolv/blob/main/CITATION.cff)):
 
 ```bibtex
-@article{wood2025uma,
-  title   = {{UMA}: A Family of Universal Models for Atoms},
-  author  = {Wood, Brandon M. and Dzamba, Misko and Fu, Xiang and Gao, Meng and Shuaibi, Muhammed and Barroso-Luque, Luis and Abdelmaqsoud, Kareem and Gharakhanyan, Vahe and Kitchin, John R. and Levine, Daniel S. and Michel, Kyle and Sriram, Anuroop and Cohen, Taco and Das, Abhishek and Rizvi, Ammar and Sahoo, Sushree Jagriti and Ulissi, Zachary W. and Zitnick, C. Lawrence},
-  year    = {2025},
-  journal = {arXiv preprint arXiv:2506.23971},
-  doi     = {10.48550/arXiv.2506.23971},
-  url     = {https://arxiv.org/abs/2506.23971}
+@misc{ni2026anysolv,
+      title={Solvating machine-learning interatomic potentials for solution-phase chemistry}, 
+      author={Anton Z. Ni and Joonho Lee},
+      year={2026},
+      eprint={2610.17226},
+      archivePrefix={arXiv},
+      primaryClass={physics.chem-ph},
+      url={https://arxiv.org/abs/2610.17226}, 
 }
 
-@misc{anysolv2026,
-  author       = {Ni, Anton Z.},
-  title        = {{AnySolv: Fast and Transferable MLIP Implicit Solvation}},
-  year         = {2026},
-  publisher    = {GitHub},
-  howpublished = {\url{https://github.com/Ant-on-knee/anysolv}},
-  note         = {GitHub repository}
+@misc{wood2026uma,
+      title={UMA: A Family of Universal Models for Atoms}, 
+      author={Brandon M. Wood and Misko Dzamba and Xiang Fu and Meng Gao and Muhammed Shuaibi and Luis Barroso-Luque and Kareem Abdelmaqsoud and Vahe Gharakhanyan and John R. Kitchin and Daniel S. Levine and Kyle Michel and Anuroop Sriram and Taco Cohen and Abhishek Das and Ammar Rizvi and Sushree Jagriti Sahoo and Zachary W. Ulissi and C. Lawrence Zitnick},
+      year={2026},
+      eprint={2506.23971},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2506.23971}, 
 }
 ```
 
