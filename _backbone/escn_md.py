@@ -27,6 +27,7 @@ from anysolv._backbone._compat.registry import registry
 from anysolv._backbone._compat.utils import conditional_grad
 from anysolv._backbone._compat.graph_compute import generate_graph
 from anysolv._backbone._compat.base import HeadInterface
+from anysolv._backbone.common.quaternion import edge_to_wigner
 from anysolv._backbone.common.rotation import (
     eulers_to_wigner,
     init_edge_rot_euler_angles,
@@ -389,14 +390,6 @@ class eSCNMDBackbone(nn.Module, MOLEInterface):
         for l in range(self.lmax + 1):
             self.register_buffer(f"Jd_{l}", Jd_list[l])
 
-        # The quaternion Wigner path is not in anysolv
-        if self.use_quaternion_wigner:
-            raise RuntimeError(
-                "use_quaternion_wigner=True is unsupported in standalone anysolv; "
-                "the Euler/Jd path (use_quaternion_wigner=False) is the included "
-                "verified-equivalent rotation path."
-            )
-
         self.sph_feature_size = int((self.lmax + 1) ** 2)
         self.mappingReduced = CoefficientMapping(self.lmax, self.mmax)
 
@@ -577,9 +570,15 @@ class eSCNMDBackbone(nn.Module, MOLEInterface):
         return x_message_prime
 
     def _get_rotmat_and_wigner(
-        self, edge_distance_vecs: torch.Tensor
+        self,
+        edge_distance_vecs: torch.Tensor,
+        use_quaternion_wigner: bool | None = None,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        # Euler/Jd rotation path only (the quaternion path is not included; see __init__).
+        if use_quaternion_wigner is None:
+            use_quaternion_wigner = self.use_quaternion_wigner
+        if use_quaternion_wigner:
+            return edge_to_wigner(edge_distance_vecs, self.lmax)
+
         # gamma is pinned to 0 in init_edge_rot_euler_angles, making this deterministic;
         # eSCN is azimuth-invariant so this matches the production model exactly.
         Jd_buffers = [
@@ -706,7 +705,12 @@ class eSCNMDBackbone(nn.Module, MOLEInterface):
         return graph_dict
 
     @conditional_grad(torch.enable_grad())
-    def forward(self, data_dict: AtomicData) -> dict[str, torch.Tensor]:
+    def forward(
+        self,
+        data_dict: AtomicData,
+        *,
+        use_quaternion_wigner: bool | None = None,
+    ) -> dict[str, torch.Tensor]:
         data_dict["atomic_numbers"] = data_dict["atomic_numbers"].long()
         data_dict["atomic_numbers_full"] = data_dict["atomic_numbers"]
         data_dict["batch_full"] = data_dict["batch"]
@@ -739,6 +743,7 @@ class eSCNMDBackbone(nn.Module, MOLEInterface):
         with record_function("obtain wigner"):
             wigner, wigner_inv = self._get_rotmat_and_wigner(
                 graph_dict["edge_distance_vec"],
+                use_quaternion_wigner=use_quaternion_wigner,
             )
             coefficient_index = (
                 self.coefficient_index if self.mmax != self.lmax else None

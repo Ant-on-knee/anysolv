@@ -8,7 +8,7 @@ Constants + enums the backbone imports from fairchem's inference API.
 
 Values copied verbatim from fairchem.core.units.mlip_unit.api.inference. `InferenceSettings`
 is a thin dataclass carrying only the fields the vendored backbone reads; the standalone
-loader (model.py) sets the few that matter (use_quaternion_wigner=False, etc.).
+loader (model.py) sets the few that matter for standalone inference.
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ class InferenceSettings:
     compile: bool = False
     external_graph_gen: bool = True
     internal_graph_gen_version: int = 2
-    use_quaternion_wigner: bool = False
+    use_quaternion_wigner: bool = True
     execution_mode: str | None = "general"
     edge_chunk_size: int | None = None
     predict_untrained_forces: set = field(default_factory=set)

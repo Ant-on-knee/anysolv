@@ -136,7 +136,9 @@ To convert $\Delta E$ to kcal/mol, multiply by `23.060548`.
 
 `inference_settings` selects the compute path (also accepted by `load_model`):
 
-- **`"default"`** — the pure-torch reference path. Bit-for-bit identical to earlier releases.
+- **`"default"`** — the pure-torch reference path using FAIRChem's stable
+  quaternion Wigner rotations. Legacy Euler/Jd inference remains available with
+  `InferenceSettings(use_quaternion_wigner=False)`.
 - **`"fast"`** — the block-diagonal SO2 GEMM backend plus TF32 matmuls and `torch.compile`.
   - Recommended for compact models (e.g. `model_compact`)
 - **`"fast_gpu"`** — everything in `"fast"` **plus Triton Wigner kernels** (CUDA-only; requires `lmax==mmax==2`; install the optional `triton` via `pip install -e ".[gpu]"`, though it is already included in the CUDA `torch` wheels). The loader auto-manages the MoE merge by model:

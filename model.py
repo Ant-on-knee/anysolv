@@ -80,7 +80,6 @@ _INFERENCE_OVERRIDES = dict(
     use_pbc=False,
     use_pbc_single=False,
     always_use_pbc=False,
-    use_quaternion_wigner=False,  # Euler/Jd path
     activation_checkpointing=False,
     regress_forces=True,
     direct_forces=False,        # conservative forces via autograd
@@ -223,6 +222,7 @@ def load_model(checkpoint: str | Path | None = None, device: str = "cpu",
 
     cfg.pop("model", None)  # class-path artifact, not a constructor kwarg
     cfg.update(_INFERENCE_OVERRIDES)
+    cfg["use_quaternion_wigner"] = settings.use_quaternion_wigner
     cfg["execution_mode"] = settings.execution_mode  # ckpt backbone_config carries no such key
 
     backbone = backbone_cls(**cfg)
