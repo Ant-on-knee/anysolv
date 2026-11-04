@@ -80,7 +80,6 @@ _INFERENCE_OVERRIDES = dict(
     use_pbc=False,
     use_pbc_single=False,
     always_use_pbc=False,
-    use_quaternion_wigner=False,  # Euler/Jd path
     activation_checkpointing=False,
     regress_forces=True,
     direct_forces=False,        # conservative forces via autograd
@@ -128,6 +127,37 @@ class AnySolvModel(nn.Module):
         ctx = tf32_context_manager() if self._settings.tf32 else nullcontext()
         with ctx:
             return self._run(data)
+
+    def predict_hessian(self, data, *, vmap: bool = False) -> dict:
+        """Predict energy, forces, and the Cartesian energy Hessian.
+
+        The analytical Hessian requires second derivatives through the reference
+        PyTorch operations. Fast backends transform the backbone and may use
+        custom kernels without a valid double backward, so they are rejected.
+        This method reuses the already loaded general-mode model and bypasses a
+        compiled forward without changing persistent model configuration.
+        """
+        if self._settings.execution_mode != "general":
+            raise ValueError(
+                "Analytical Hessians require inference_settings with "
+                "execution_mode='general'."
+            )
+        if not self._prepared:
+            self._prepare(data)
+        else:
+            self.backbone.on_predict_check(data)
+        ctx = tf32_context_manager() if self._settings.tf32 else nullcontext()
+        with ctx:
+            # Hessians require the stable two-chart rotation for nonsingular
+            # coordinate double backward, even if legacy Euler inference was
+            # explicitly requested for ordinary predictions.
+            emb = self.backbone(data, use_quaternion_wigner=True)
+            return self.output_heads["efs"](
+                data,
+                emb,
+                calculate_hessian=True,
+                hessian_vmap=vmap,
+            )
 
 
 def _resolve(checkpoint: str | Path) -> Path:
@@ -223,6 +253,7 @@ def load_model(checkpoint: str | Path | None = None, device: str = "cpu",
 
     cfg.pop("model", None)  # class-path artifact, not a constructor kwarg
     cfg.update(_INFERENCE_OVERRIDES)
+    cfg["use_quaternion_wigner"] = settings.use_quaternion_wigner
     cfg["execution_mode"] = settings.execution_mode  # ckpt backbone_config carries no such key
 
     backbone = backbone_cls(**cfg)

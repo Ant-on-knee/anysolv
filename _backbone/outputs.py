@@ -277,23 +277,19 @@ def compute_hessian_loop(
     Returns:
         Hessian matrix of shape [N*3, N*3].
     """
-    n_forces = len(forces_flat)
-    hessian = torch.zeros(
-        (n_forces, n_forces),
-        device=forces_flat.device,
-        dtype=forces_flat.dtype,
-        requires_grad=False,
-    )
-
-    for i in range(n_forces):
-        hessian[:, i] = torch.autograd.grad(
-            -forces_flat[i],
+    rows = []
+    for i, force_component in enumerate(forces_flat.unbind()):
+        gradient = torch.autograd.grad(
+            -force_component,
             pos,
-            retain_graph=i < n_forces - 1,
+            retain_graph=i < forces_flat.numel() - 1,
             create_graph=create_graph,
-        )[0].flatten()
+        )[0]
+        rows.append(gradient.flatten())
 
-    return hessian
+    # Row i is d(-F_i)/dR, matching the conventional flattened Hessian
+    # H[i, j] = d^2 E / (dR_i dR_j).
+    return torch.stack(rows)
 
 
 def compute_hessian(
