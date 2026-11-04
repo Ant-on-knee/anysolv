@@ -1146,7 +1146,12 @@ class MLP_EFS_Head(nn.Module, HeadInterface):
 
     @conditional_grad(torch.enable_grad())
     def forward(
-        self, data: AtomicData, emb: dict[str, torch.Tensor]
+        self,
+        data: AtomicData,
+        emb: dict[str, torch.Tensor],
+        *,
+        calculate_hessian: bool | None = None,
+        hessian_vmap: bool | None = None,
     ) -> dict[str, torch.Tensor]:
         energy_key = f"{self.prefix}_energy" if self.prefix else "energy"
         forces_key = f"{self.prefix}_forces" if self.prefix else "forces"
@@ -1178,9 +1183,13 @@ class MLP_EFS_Head(nn.Module, HeadInterface):
                 {"embeddings": embeddings} if self.wrap_property else embeddings
             )
 
-        # Determine if we need create_graph for higher-order derivatives
-        # Hessian computation requires second derivatives, so we need create_graph=True
-        create_graph = self.training or self.regress_config.hessian
+        if calculate_hessian is None:
+            calculate_hessian = self.regress_config.hessian
+        if hessian_vmap is None:
+            hessian_vmap = self.regress_config.hessian_vmap
+
+        # Hessian computation requires the force calculation to retain its graph.
+        create_graph = self.training or calculate_hessian
 
         if self.regress_config.stress and not self.regress_config.direct_stress:
             forces, stress = compute_forces_and_stress(
@@ -1194,12 +1203,12 @@ class MLP_EFS_Head(nn.Module, HeadInterface):
             outputs[forces_key] = {"forces": forces} if self.wrap_property else forces
             outputs[stress_key] = {"stress": stress} if self.wrap_property else stress
         elif self.regress_config.forces and not self.regress_config.direct_forces:
-            forces = compute_forces(energy_part, data["pos"], training=self.training)
+            forces = compute_forces(energy_part, data["pos"], training=create_graph)
             outputs[forces_key] = {"forces": forces} if self.wrap_property else forces
         else:
             forces = None
 
-        if self.regress_config.hessian:
+        if calculate_hessian:
             if forces is None:
                 raise ValueError(
                     "Hessian computation requires forces. "
@@ -1214,12 +1223,14 @@ class MLP_EFS_Head(nn.Module, HeadInterface):
             hessian = compute_hessian(
                 forces,
                 data["pos"],
-                vmap=self.regress_config.hessian_vmap,
-                training=create_graph,
+                vmap=hessian_vmap,
+                # The force graph above is needed for this second derivative.
+                # A graph of the Hessian itself is needed only while training
+                # against third-order derivatives, not during inference.
+                training=self.training,
             )
             outputs[hessian_key] = (
                 {"hessian": hessian} if self.wrap_property else hessian
             )
 
         return outputs
-

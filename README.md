@@ -130,6 +130,31 @@ predict_solvation_energy(
 ) -> tuple[float, np.ndarray]  # (dE in eV, dF in eV/angstrom with shape [n_atoms, 3])
 ```
 
+The analytical Cartesian Hessian of the AnySolv correction is available through
+`predict_solvation_hessian`. It has shape `(3N, 3N)` and units eV/angstrom^2:
+
+```python
+import torch
+from anysolv import predict_solvation_hessian
+
+dH = predict_solvation_hessian(
+    (Z, R),
+    charge=0,
+    spin=1,
+    solvent="water",
+    device="cuda",
+    dtype=torch.float64,
+    inference_settings="default",
+)
+```
+
+Analytical Hessians require the reference `general` backend. The default inference
+settings already use this backend, and the Hessian call reuses the same process-cached
+model as energy/force prediction. Float64 is recommended. The default Hessian
+implementation loops over force components to limit memory; pass `vmap=True` for the
+faster, higher-memory vectorized implementation on small systems. The Hessian path
+always uses FAIRChem's stable two-chart quaternion rotations internally.
+
 To convert $\Delta E$ to kcal/mol, multiply by `23.060548`.
 
 ### Faster inference
